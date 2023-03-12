@@ -30,9 +30,10 @@ BubbleCapture is released under the MIT License. See LICENSE.txt for more inform
 
 ## **Credits**
 
-BubbleCapture was created by [Your Name Here] as a project for [Course/Program Name]. The app uses several third-party libraries and tools, including:
+BubbleCapture was created as a project to assist in the analysis process of manga pages in general. The app uses several third-party libraries and tools, including:
 
 - **[Electron](https://www.electronjs.org/)**
 - **[React](https://reactjs.org/)**
+- More soon
 
 
