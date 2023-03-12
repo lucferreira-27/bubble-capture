@@ -8,8 +8,7 @@ BubbleCapture is a desktop application that allows users to select speech bubble
 - Automatically extract text from selected speech bubbles, organized by character and dialogue
 - Export transcription results to a JSON file for easy use in other applications
 - Simple and intuitive user interface, designed with manga readers and transcriptionists in mind
-- Uses advanced image processing techniques to accurately identify speech bubbles and ignore background noise
-- Uses natural language processing techniques to detect and separate dialogue from sound effects and other non-dialogue text
+- More soon
 
 ## **Getting Started**
 
