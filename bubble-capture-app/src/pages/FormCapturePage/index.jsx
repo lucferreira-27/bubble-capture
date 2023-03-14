@@ -2,177 +2,81 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import {
     Grid,
-    TextField,
-    Button,
-    createTheme,
     ThemeProvider,
-    makeStyles,
-    createStyles,
-    Box,
-    Typography,
-    CircularProgress, // Import the CircularProgress component
+    Container,
+    Button,
 } from "@material-ui/core";
-const theme = createTheme({
-    palette: {
-        primary: {
-            main: "#bdbdbd",
-        },
-        secondary: {
-            main: "#f50057",
-        },
-    },
-    typography: {
-        fontFamily: "'Panton', sans-serif",
-    },
-});
-
-const useStyles = makeStyles((theme) =>
-    createStyles({
-        form: {
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            padding: theme.spacing(2),
-            borderRadius: theme.shape.borderRadius,
-            marginBottom: theme.spacing(2),
-        },
-        textField: {
-            marginBottom: theme.spacing(2),
-            "& .MuiInputBase-input": {
-                padding: "0.8rem",
-                backgroundColor: "#1f1f1f",
-                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-                color: "#fff",
-                fontSize: "1rem",
-                border: "none",
-                borderRadius: theme.shape.borderRadius,
-            },
-        },
-        autoCompleteButton: {
-            marginTop: theme.spacing(1),
-            marginBottom: theme.spacing(1),
-            marginLeft: theme.spacing(2),
-            backgroundColor: theme.palette.secondary.main,
-            borderRadius: "2rem",
-            textTransform: "uppercase",
-            letterSpacing: "0.1rem",
-            transition: "background-color 0.3s ease",
-            padding: "0.6rem 1rem",
-            color: "#fff",
-            "&:hover": {
-                backgroundColor: theme.palette.secondary.dark,
-            },
-        },
-        submitButton: {
-            marginTop: theme.spacing(2),
-            backgroundColor: "transparent",
-            border: `1px solid ${theme.palette.grey[400]}`,
-            borderRadius: "2rem",
-            textTransform: "uppercase",
-            letterSpacing: "0.1rem",
-            transition: "background-color 0.3s ease",
-            padding: "0.6rem 2rem",
-            color: theme.palette.grey[400],
-            "&:hover": {
-                backgroundColor: theme.palette.grey[400],
-                color: "#fff",
-            },
-        },
-        header: {
-            fontFamily: "'Panton', sans-serif",
-            fontSize: "2rem",
-            color: "#fff",
-            marginBottom: theme.spacing(2),
-            textAlign: "center",
-        },
-        coverImage: {
-            marginTop: theme.spacing(2),
-            width: "200px",
-            height: "auto",
-        },
-    })
-);
+import { useStyles, theme } from "./styles";
+import FolderList from "./FolderList/FolderList";
+import MangaInfo from "./MangaInfo/MangaInfo";
+import SearchInput from "./SearchInput/SearchInput"
+import FolderInput from "./FolderInput/FolderInput"
+import { searchManga, findFolder } from "./utils";
 
 function FormCapturePage({ className }) {
     const classes = useStyles();
     const { register, handleSubmit, getValues } = useForm();
-    const [coverImage, setCoverImage] = useState(null);
-    const [isLoading, setIsLoading] = useState(false); // Add state for loading indicator
+    const [mangaInfo, setMangaInfo] = useState(null);
+    const [folderLocation, setFolderLocation] = useState(null);
 
-    const handleAutoCompleteClick = () => {
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleSearchClick = async () => {
         const title = getValues("title");
         setIsLoading(true);
-        fetch(`https://via.placeholder.com/300x400.png?text=${title}`,{
-            mode: 'no-cors'
-          })
-            .then((response) => {
-                if (!response.ok) {
-                    console.log(response)
-                    throw new Error(response);
-                }
-                return response.blob();
-            })
-            .then((blob) => {
-                setIsLoading(false);
-                setCoverImage(URL.createObjectURL(blob));
-            })
-            .catch((error) => {
-                console.error("Error fetching image:", error);
-                setIsLoading(false);
-                setCoverImage(`https://via.placeholder.com/300x400.png?text=${title}`);
-            });
-    };
+        try {
+          const mangaInfo = await searchManga(title);
+          setIsLoading(false);
+          setMangaInfo(mangaInfo);
+        } catch (error) {
+          console.error("Error searching for manga:", error);
+          setIsLoading(false);
+          mangaInfo.title = title
+          mangaInfo.coverImage = `https://via.placeholder.com/300x400.png?text=${title}`
+          setMangaInfo(mangaInfo);
+        }
+      };
+      
 
     const handleFolderFindClick = () => {
-        // Placeholder function to handle folder find button click
-        console.log("Folder find clicked!");
+        findFolder();
     };
 
     const onSubmit = (data) => {
-        // Placeholder function to handle form submission
         console.log(data);
     };
 
     return (
-        <ThemeProvider theme={theme}>
-            <form className={`${classes.form} ${className}`} onSubmit={handleSubmit(onSubmit)}>
-                <Grid container spacing={2}>
-                    <Grid item xs={12}>
-                        <h1 className={classes.header}>MANGA REGISTRATION</h1>
+        <Container maxWidth="lg">
+            <ThemeProvider theme={theme}>
+                <form className={`${classes.form} ${className}`} onSubmit={handleSubmit(onSubmit)}>
+                    <Grid container spacing={2} justifyContent="center">
+                        <Grid item xs={12}>
+                            <h1 className={classes.header}>MANGA REGISTRATION</h1>
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                            <MangaInfo mangaInfo={mangaInfo} isLoading={isLoading} classes={classes} />
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                            <Grid container spacing={2} direction="column">
+                                <SearchInput register={register} handleSearchClick={handleSearchClick} classes={classes} />
+                                <FolderInput register={register} handleFolderFindClick={handleFolderFindClick} classes={classes} />
+                            </Grid>
+                        </Grid>
+                        {folderLocation &&
+                            <Grid item xs={12}>
+                                <FolderList classes={classes} />
+                            </Grid>
+                        }
+                        <Grid item xs={1}>
+                            <Button type="submit" variant="contained" color="primary" className={classes.submitButton}>
+                                FINISH
+                            </Button>
+                        </Grid>
                     </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <TextField label="Title" fullWidth className={classes.textField} {...register("title", { required: true })} />
-                        <Button variant="contained" color="secondary" className={classes.autoCompleteButton} onClick={handleAutoCompleteClick}>
-                            Auto-Complete
-                        </Button>
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <TextField label="Path" fullWidth className={classes.textField} {...register("path", { required: true })} />
-                        <Button variant="contained" color="primary" className={classes.autoCompleteButton} onClick={handleFolderFindClick}>
-                            Find Folder
-                        </Button>
-                    </Grid>
-                    <Grid item xs={12}>
-                        {isLoading ? ( // Render the loading indicator conditionally
-                            <Box display="flex" justifyContent="center" alignItems="center">
-                                <CircularProgress />
-                            </Box>
-                        ) : (
-                            coverImage && (
-                                <Box display="flex" justifyContent="center" alignItems="center">
-                                    <img src={coverImage} alt="Manga Cover" className={classes.coverImage} />
-                                </Box>
-                            )
-                        )}
-                    </Grid>
-                    <Grid item xs={12}>
-                        <Button type="submit" variant="contained" color="primary" fullWidth className={classes.submitButton}>
-                            Submit
-                        </Button>
-                    </Grid>
-                </Grid>
-            </form>
-        </ThemeProvider>
+                </form>
+            </ThemeProvider>
+        </Container>
     );
 }
 
