@@ -25,7 +25,7 @@ function FormCapturePage({ className }) {
         const title = getValues("title");
         setIsLoading(true);
         try {
-          const mangaInfo = await searchManga(title);
+          const mangaInfo = await searchManga(title,{includeCharacters:true,includeVolumes:true});
           setIsLoading(false);
           setMangaInfo(mangaInfo);
         } catch (error) {

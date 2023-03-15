@@ -40,22 +40,25 @@ function MangaInfo({ mangaInfo, isLoading, classes }) {
                     {mangaInfo.title}
                   </Typography>
                   <Typography variant="subtitle1" gutterBottom>
-                    Chapters: {mangaInfo.chapterCount || "Not Avaiblabe"}
+                    Chapters: {mangaInfo.chapterCount || "Not Available"}
                   </Typography>
                   <Typography variant="subtitle1" gutterBottom>
-                    Volumes: {mangaInfo.volumeCount || "Not Avaiblabe"}
+                    Volumes: {mangaInfo.volumeCount || "Not Available"}
                   </Typography>
                   <Typography variant="subtitle1" gutterBottom>
-                    Published In: {mangaInfo.serialization || "Not Avaiblabe"}
+                    Published In: {mangaInfo.serialization || "Not Available"}
                   </Typography>
                   <Typography variant="subtitle1" gutterBottom>
                     Release: {formatDate(mangaInfo.startDate)}
                   </Typography>
                   <Typography variant="subtitle1" gutterBottom>
-                    Finish: {mangaInfo.endDate ? formatDate(mangaInfo.endDate) :"Not Avaiblabe"}
+                    Finish: {mangaInfo.endDate ? formatDate(mangaInfo.endDate) :"Not Available"}
                   </Typography>
                   <Typography variant="subtitle1" gutterBottom>
-                    Characters: {mangaInfo.characters ? mangaInfo.characters.length : "Not Avaiblabe"}
+                    Characters: {mangaInfo.characters ? mangaInfo.characters.length : "Not Available"}
+                  </Typography>
+                  <Typography variant="subtitle1" gutterBottom>
+                    Total Pages: {mangaInfo.totalPages ? mangaInfo.totalPages : "Not Available"}
                   </Typography>
                 </Box>
               )}
