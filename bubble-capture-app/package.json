@@ -15,15 +15,19 @@
   "dependencies": {
     "@material-ui/core": "^4.12.4",
     "@material-ui/icons": "^4.11.3",
+    "cheerio": "^1.0.0-rc.12",
     "classnames": "^2.3.2",
     "cross-env": "^7.0.3",
+    "electron-fetch": "^1.9.1",
     "electron-is-dev": "^1.2.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "react-hook-form": "^7.43.5",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "4.0.1"
+    "react-scripts": "^5.0.1"
   },
   "scripts": {
+    "test": "jest",
     "start-react": "react-scripts start",
     "build-react": "react-scripts build",
     "test-react": "react-scripts test --env=jsdom",
@@ -51,6 +55,7 @@
     "concurrently": "^5.3.0",
     "electron": "^11.1.1",
     "electron-builder": "^22.9.1",
+    "jest": "^26.6.0",
     "wait-on": "^5.2.1"
   }
 }

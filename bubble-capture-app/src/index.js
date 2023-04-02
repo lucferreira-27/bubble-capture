@@ -1,18 +1,21 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import { HashRouter as Router, Route } from 'react-router-dom'
-
-import Home from "./pages/HomePage/HomePage"
+import React from "react";
+import ReactDOM from "react-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import HomePage from "./pages/HomePage";
+import FormCapturePage from "./pages/FormCapturePage";
 
 ReactDOM.render(
+  <React.StrictMode>
     <Router>
-        <div>
-            <main>
-                <Route exact path="/" component={Home} />
-            </main>
-        </div>
-    </Router>, 
-    document.getElementById("root")
-    
-)
+      <Switch>
+        <Route path="/form-capture">
+          <FormCapturePage />
+        </Route>
+        <Route path="/">
+          <HomePage />
+        </Route>
+      </Switch>
+    </Router>
+  </React.StrictMode>,
+  document.getElementById("root")
+);
