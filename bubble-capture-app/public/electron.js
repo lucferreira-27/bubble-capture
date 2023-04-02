@@ -1,6 +1,4 @@
-const electron = require("electron");
-const app = electron.app;
-const BrowserWindow = electron.BrowserWindow;
+const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require("path");
 const isDev = require("electron-is-dev");
 let mainWindow;
@@ -56,6 +54,18 @@ function createWindow() {
 }
 
 
+
+ipcMain.handle('open-directory-dialog', async () => {
+    const result = await dialog.showOpenDialog({
+      properties: ['openDirectory'],
+    });
+  
+    if (!result.canceled) {
+      return result.filePaths[0];
+    } else {
+      return null;
+    }
+  });
 
 app.on("ready", createWindow);
 app.on("window-all-closed", () => {

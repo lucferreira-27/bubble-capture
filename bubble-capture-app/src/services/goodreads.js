@@ -9,11 +9,10 @@ const goodreads = {
         const response = await axios.get(url);
         const $ = cheerio.load(response.data);
         const bookUrl = baseUrl + goodreads._getBookUrl($);
-        console.log(bookUrl)
         const bookResponse = await axios.get(bookUrl);
         const $$ = cheerio.load(bookResponse.data);
         const seriesUrl = goodreads._getSeriesUrl($$);
-        console.log(seriesUrl)
+        console.log("seriesUrl",seriesUrl)
         const volumes = await goodreads.getListVolumes(seriesUrl);
         const totalPages = goodreads.getTotalPages(volumes);
         return {
@@ -33,6 +32,7 @@ const goodreads = {
         let numberOfPrimaryWorks = null;
 
         const fetchVolumesFromPage = async (url) => {
+            console.log("fetchVolumesFromPage",url)
             const seriesResponse = await axios.get(url);
             const $ = cheerio.load(seriesResponse.data);
             if(!numberOfPrimaryWorks){
@@ -63,7 +63,6 @@ const goodreads = {
 
         $('[data-react-class="ReactComponents.SeriesList"]').each((index, element) => {
             const volumesDataEncoded = $(element).attr('data-react-props');
-            console.log(volumesDataEncoded)
             const volumesDataJson = volumesDataEncoded.replace(/&amp;quot;/g, '"');
             const volumesData = JSON.parse(volumesDataJson);
 

@@ -17,13 +17,14 @@ function FormCapturePage({ className }) {
     const classes = useStyles();
     const { register, handleSubmit, getValues } = useForm();
     const [mangaInfo, setMangaInfo] = useState(null);
-    const [folderLocation, setFolderLocation] = useState(null);
+    const [folder, setFolder] = useState(null);
 
     const [isLoading, setIsLoading] = useState(false);
 
     const handleSearchClick = async () => {
         const title = getValues("title");
         setIsLoading(true);
+        let mangaInfo = {}
         try {
           const mangaInfo = await searchManga(title,{includeCharacters:true,includeVolumes:true});
           setIsLoading(false);
@@ -39,7 +40,8 @@ function FormCapturePage({ className }) {
       
 
     const handleFolderFindClick = () => {
-        findFolder();
+       const listFiles = findFolder();
+       setFolder({listFiles})
     };
 
     const onSubmit = (data) => {
@@ -60,12 +62,12 @@ function FormCapturePage({ className }) {
                         <Grid item xs={12} md={6}>
                             <Grid container spacing={2} direction="column">
                                 <SearchInput register={register} handleSearchClick={handleSearchClick} classes={classes} />
-                                <FolderInput register={register} handleFolderFindClick={handleFolderFindClick} classes={classes} />
+                                <FolderInput register={register} handleFolderFindClick={handleFolderFindClick} classes={classes} disabled={false} />
                             </Grid>
                         </Grid>
-                        {folderLocation &&
+                        {folder &&
                             <Grid item xs={12}>
-                                <FolderList classes={classes} />
+                                <FolderList folder={folder} classes={classes} />
                             </Grid>
                         }
                         <Grid item xs={1}>

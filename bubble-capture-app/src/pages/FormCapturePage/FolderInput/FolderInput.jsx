@@ -6,7 +6,7 @@ import {
 } from "@material-ui/core";
 
 
-function FolderInput({ register, handleFolderFindClick, classes }) {
+function FolderInput({ register, handleFolderFindClick, classes, disabled }) {
     return (
       <Grid item xs={12}  container alignItems="flex-end" justifyContent="flex-end">
         <TextField
@@ -14,14 +14,14 @@ function FolderInput({ register, handleFolderFindClick, classes }) {
           fullWidth
           className={classes.textField}
           {...register("path", { required: true })}
-          disabled={true}
+          disabled={disabled}
         />
         <Button
           variant="contained"
           color="primary"
           className={classes.findFolderButton}
           onClick={handleFolderFindClick}
-          disabled={true}
+          disabled={disabled}
         >
           Find Folder
         </Button>
