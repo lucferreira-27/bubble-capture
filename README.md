@@ -20,9 +20,6 @@ To get started with BubbleCapture, follow these simple steps:
 
 Once the app is running, you can open a manga page and use the click-and-drag interface to select speech bubbles and panels. The app will automatically extract the text and organize it by character and dialogue. You can then export the results to a JSON file for easy use in other applications.
 
-## **Contributing**
-
-We welcome contributions from anyone who is interested in helping to improve BubbleCapture! To get started, fork the repository and submit a pull request with your changes. We also encourage you to open issues for any bugs, feature requests, or other feedback you have.
 
 ## **License**
 
