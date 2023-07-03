@@ -1,75 +1,152 @@
-// Import express and fs modules
 const express = require('express');
-const fs = require('fs');
-
-// Create an express app
 const app = express();
-
-// Use express.static to serve images from the public folder
-app.use(express.static('public'));
-
-// Use express.json to parse JSON requests
+const fs = require('fs');
+const path = require('path');
+const cors = require('cors'); // Import the cors package
+app.use(cors()); // Enable CORS for all routes
 app.use(express.json());
 
-// Define a route to get the list of images
-app.get('/images', (req, res) => {
-  // Read the images.json file
-  fs.readFile('images.json', 'utf8', (err, data) => {
-    // Handle errors
-    if (err) {
-      res.status(500).send('Error reading images.json');
-    } else {
-      // Parse the JSON data
-      const images = JSON.parse(data);
-      // Send the images array as a response
-      res.json(images);
+const ROOT_DIRECTORY = `E:/One Piece - Manga v1 - v102/`;
+
+function parseString(str) {
+  const obj = {};
+  const chapterMatch = str.match(/c(\d+)/);
+  const volumeMatch = str.match(/v(\d+)/);
+  const pageMatch = str.match(/p(\d+)/);
+  const fileTypeMatch = str.match(/\.(\w+)/);
+
+  if (chapterMatch) obj.chapter = chapterMatch[1];
+  if (volumeMatch) obj.volume = volumeMatch[1];
+  if (pageMatch) obj.page = pageMatch[1];
+  if (fileTypeMatch) obj.fileType = fileTypeMatch[1];
+
+  return obj;
+}
+
+function findImageFile(files, page) {
+  for (const file of files) {
+    const fileInfo = parseString(file);
+    const isFileType =
+      fileInfo.fileType === 'jpg' || fileInfo.fileType === 'jpeg' || fileInfo.fileType === 'png';
+    const isPage = parseInt(fileInfo.page) === page;
+
+    if (isFileType && isPage) {
+      return file;
     }
+  }
+
+  return null;
+}
+
+app.get('/api/images/:series/:chapter/:page', (req, res) => {
+  const { series, chapter, page } = req.params;
+  const directoryPath = path.join(ROOT_DIRECTORY, 'images', series, `Chapter ${chapter}`);
+
+  fs.readdir(directoryPath, (err, files) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Failed to read directory.' });
+    }
+
+    const imageFile = findImageFile(files, parseInt(page));
+
+    if (imageFile) {
+      const imagePath = path.join(directoryPath, imageFile);
+      return res.sendFile(imagePath);
+    }
+
+    return res.status(404).json({ error: 'No image file found.' });
   });
 });
 
-// Define a route to edit and save an image
-app.put('/images/:id', (req, res) => {
-  // Get the image id from the params
-  const id = req.params.id;
-  // Get the image data from the body
-  const image = req.body;
-  // Read the images.json file
-  fs.readFile('images.json', 'utf8', (err, data) => {
-    // Handle errors
+app.get('/api/images/:series/:chapter', (req, res) => {
+  const { series, chapter } = req.params;
+  const directoryPath = path.join(ROOT_DIRECTORY, 'images', series, `Chapter ${chapter}`);
+
+  fs.readdir(directoryPath, (err, files) => {
     if (err) {
-      res.status(500).send('Error reading images.json');
-    } else {
-      // Parse the JSON data
-      const images = JSON.parse(data);
-      // Find the index of the image with the given id
-      const index = images.findIndex(img => img.id === id);
-      // If the image is not found, send a 404 response
-      if (index === -1) {
-        res.status(404).send('Image not found');
-      } else {
-        // Otherwise, update the image with the new data
-        images[index] = image;
-        // Stringify the updated images array
-        const newData = JSON.stringify(images, null, 2);
-        // Write the new data to the images.json file
-        fs.writeFile('images.json', newData, 'utf8', (err) => {
-          // Handle errors
-          if (err) {
-            res.status(500).send('Error writing images.json');
-          } else {
-            // Send a success message as a response
-            res.send('Image updated successfully');
-          }
-        });
+      console.error(err);
+      return res.status(500).json({ error: 'Failed to read directory.' });
+    }
+
+    const pageEndpoints = files.reduce((endpoints, file) => {
+      const fileInfo = parseString(file);
+      if (fileInfo.page) {
+        const page = parseInt(fileInfo.page);
+        const endpoint = `/api/images/${series}/${chapter}/${page}`;
+        endpoints.push({name:fileInfo.page,src:endpoint,fileType:page.fileType});
       }
-    }
+      return endpoints;
+    }, []);
+
+    return res.json({ pages: pageEndpoints });
   });
 });
 
-// Define a port to listen on
-const port = process.env.PORT || 3000;
 
-// Start the server and log a message
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+app.get('/api/data/:series/:chapterNumber', (req, res) => {
+  const { series, chapterNumber } = req.params;
+  const directory = path.join(ROOT_DIRECTORY, 'data');
+  const rawData = fs.readFileSync(path.join(directory, 'chapters.json'), 'utf8');
+
+  try {
+    const jsonData = JSON.parse(rawData);
+    const chapterData = jsonData.find((chapter) => parseInt(chapter.number) === parseInt(chapterNumber));
+
+    if (chapterData) {
+      return res.json(chapterData);
+    }
+
+    return res.status(404).json({ error: `Chapter ${chapterNumber} not found.` });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Failed to parse chapter data.' });
+  }
+});
+
+app.get('/api/images', (req, res) => {
+  const series = req.query.series;
+  const directoryPath = path.join(ROOT_DIRECTORY, 'images', series);
+  console.log(directoryPath)
+  fs.readdir(directoryPath, (err, files) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Failed to read directory.' });
+    }
+
+    const imageFiles = files.filter((file) => {
+      const fileInfo = parseString(file);
+      return (
+        (fileInfo.fileType === 'jpg' || fileInfo.fileType === 'jpeg' || fileInfo.fileType === 'png') &&
+        fileInfo.chapter &&
+        fileInfo.page
+      );
+    });
+
+    return res.json({ images: imageFiles });
+  });
+});
+
+app.get('/api/data', (req, res) => {
+  const series = req.query.series;
+  const directory = path.join(ROOT_DIRECTORY, 'data');
+  const rawData = fs.readFileSync(path.join(directory, 'chapters.json'), 'utf8');
+
+  try {
+    const jsonData = JSON.parse(rawData);
+    const seriesData = jsonData.filter((chapter) => chapter.series === series);
+
+    if (seriesData.length > 0) {
+      return res.json({ series: series, chapters: seriesData });
+    }
+
+    return res.status(404).json({ error: `Series ${series} not found.` });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Failed to parse chapter data.' });
+  }
+});
+
+app.listen(3000, () => {
+  console.log('Server is running on port 3000');
 });
