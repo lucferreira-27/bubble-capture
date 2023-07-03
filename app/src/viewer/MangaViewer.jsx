@@ -23,16 +23,11 @@ const MangaViewer = ({ directory, series, chapter }) => {
 
             // If the response is successful, set the pages state to the response data
             if (responseImage.status === 200 && responseData.status === 200) {
-                console.log(responseData.data.pages[0])
-                console.log(responseImage.data.pages[0])
 
                 const images = responseImage.data.pages.map(({ src }) => `http://localhost:3000${src}`);
                 const pages = responseData.data.pages.map((data, index) => {
-                    console.log(data)
                     return { ...data, src: images[index] }
                 });
-
-                console.log(pages)
                 setPages(pages);
             }
 
@@ -51,6 +46,7 @@ const MangaViewer = ({ directory, series, chapter }) => {
     // A function to handle the change of the page index
     const handleChangePage = (delta) => {
         // Calculate the new page index by adding the delta value
+        console.log(pageIndex,delta)
         let newIndex = pageIndex + delta;
 
         // Check if the new index is within the range of the pages array
@@ -64,11 +60,8 @@ const MangaViewer = ({ directory, series, chapter }) => {
         <div>
 
             {/* Render a PageViewer component with the current page as a prop */}
-            <EditPanel page={pages[pageIndex]} />
-            <Box>
-                <Button onClick={() => handleChangePage(-1)}>Previous</Button>
-                <Button onClick={() => handleChangePage(1)}>Next</Button>
-            </Box>
+            <EditPanel handleChangePage={handleChangePage} page={pages[pageIndex]} />
+
         </div>
     );
 };

@@ -26,7 +26,7 @@ const SpeechBubbleCard = ({ bubble }) => {
     };
 
     return (
-        <Card sx={{ width: '100%' }}>
+        <Card sx={{ width: '75%' }}>
             <CardContent>
                 <ListItemText
                     primary="Luffy"

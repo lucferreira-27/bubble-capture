@@ -10,7 +10,7 @@ const Canvas = ({ page, onSelect }) => {
     const [selectedBubble, setSelectedBubble] = useState(null);
 
     // A custom hook to load the image from the page url
-    const [image] = useImage(`${page.src}`);
+    const [image, status] = useImage(`${page.src}`);
 
     // A function to handle the click event on a block
     const handleClick = (block) => {
@@ -20,9 +20,9 @@ const Canvas = ({ page, onSelect }) => {
     };
 
     return (
-        <Container>
-            <Stage width={950} height={670}>
-                <Layer>
+        <Container sx={{ overflow: 'auto', width: `500px` }}>
+            <Stage width={image ? (image.width * 0.30) : 450} height={670}>
+                {image && <Layer>
                     {/* Render an Image component with the loaded image and scale it to 25% */}
                     <Image image={image} scale={{ x: zoomOut, y: zoomOut }} />
 
@@ -66,7 +66,8 @@ const Canvas = ({ page, onSelect }) => {
                             />
                         );
                     })}
-                </Layer>
+                </Layer>}
+
             </Stage>
 
         </Container>

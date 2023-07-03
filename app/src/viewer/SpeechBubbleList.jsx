@@ -4,7 +4,7 @@ import SpeechBubbleCard from './SpeechBubbleCard';
 
 const SpeechBubbleList = ({ bubbles }) => {
     return (
-        <List sx={{ width: '100%', bgcolor: `#0d47a5`,overflow: 'auto',maxHeight: `70%` }}>
+        <List  sx={{ overflow: 'auto',maxHeight: 650 }}>
             {bubbles.map((bubble, index) => (
                 <>
                     <Card sx={{margin: `8px` }}>
@@ -19,8 +19,6 @@ const SpeechBubbleList = ({ bubbles }) => {
 
                     </Card>
                 </>
-
-
             ))}
         </List>
     );

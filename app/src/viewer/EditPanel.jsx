@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
-import { Grid,Box } from '@mui/material';
+import React, { useState, useEffect, useRef } from 'react';
+import { Grid, Box, Container, Stack,Button } from '@mui/material';
 import Canvas from './Canvas';
 import SpeechBubbleList from './SpeechBubbleList';
 
-const EditPanel = ({ page }) => {
-    console.log(page)
+const EditPanel = ({ page,handleChangePage }) => {
     // A state to store the selected speech bubbles
     const [selectedBubbles, setSelectedBubbles] = useState([]);
 
@@ -22,17 +21,44 @@ const EditPanel = ({ page }) => {
         }
     };
 
-    return (
-        
-        <Grid container spacing={1}>
-            <Grid item xs={6} md={4}>
-                <SpeechBubbleList bubbles={selectedBubbles} />
-            </Grid>
-            <Grid item xs={12} md={8}>
-                {page && <Canvas page={page} onSelect={handleSelect} />}
-            </Grid>
+    // A function to handle the keydown event
+    const handleKeyDown = (event) => {
+        // Check the keyCode of the event object
+        if (event.keyCode === 37) {
+            handleChangePage(-1);
+        } else if (event.keyCode === 39) {
+            handleChangePage(1);
+        }
+    };
 
-        </Grid>
+    // A useEffect hook to add and remove the event listener
+    useEffect(() => {
+        window.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [page]);
+
+
+    return (
+        <Container direction="row">
+            <Grid container spacing={0.5}>
+                <Grid item xs={6} md={6}>
+                    <SpeechBubbleList bubbles={selectedBubbles} />
+                </Grid>
+                <Grid item xs={6} md={6}>
+                    <Box direction="column">
+                        {page && <Canvas page={page} onSelect={handleSelect} />}
+                        <Box sx={{margin:'5px'}}>
+                            <Button  onClick={() => handleChangePage(-1)}>Previous</Button>
+                            <Button  onClick={() => handleChangePage(1)}>Next</Button>
+                        </Box>
+                    </Box>
+
+                </Grid>
+            </Grid>
+        </Container>
     );
 };
 
