@@ -74,7 +74,7 @@ app.get('/api/images/:series/:chapter', (req, res) => {
       if (fileInfo.page) {
         const page = parseInt(fileInfo.page);
         const endpoint = `/api/images/${series}/${chapter}/${page}`;
-        endpoints.push({name:fileInfo.page,src:endpoint,fileType:page.fileType});
+        endpoints.push({ name: fileInfo.page, src: endpoint, fileType: page.fileType });
       }
       return endpoints;
     }, []);
@@ -92,7 +92,10 @@ app.get('/api/data/:series/:chapterNumber', (req, res) => {
   try {
     const jsonData = JSON.parse(rawData);
     const chapterData = jsonData.find((chapter) => parseInt(chapter.number) === parseInt(chapterNumber));
-
+    chapterData.pages.forEach((page) => {
+      let blocks = page.blocks
+      page.blocks = blocks.map((b, index) => ({ ...b, id: index }))
+    })
     if (chapterData) {
       return res.json(chapterData);
     }
