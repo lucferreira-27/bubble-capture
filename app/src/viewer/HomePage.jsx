@@ -3,7 +3,7 @@ import MangaViewer from './MangaViewer';
 import Settings from './Settings';
 
 
-const MangaSettings = () => {
+const HomePage = () => {
 
     // A state to store the show viewer flag
     const [showViewer, setShowViewer] = useState(false);
@@ -27,4 +27,4 @@ const MangaSettings = () => {
     )
 };
 
-export default MangaSettings;
+export default HomePage;

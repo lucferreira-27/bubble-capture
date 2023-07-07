@@ -1,41 +1,100 @@
-import React from 'react';
-import { Card, CardContent, Typography,ListItemText } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import {
+    Card,
+    CardContent,
+    Stack,
+    ListItemText,
+    Paper,
+    Box,
+    Button,
+    Typography,
+    InputBase
+} from '@mui/material';
+import EditNoteIcon from '@mui/icons-material/EditNote';
+import RestoreIcon from '@mui/icons-material/Restore';
+import BoltIcon from '@mui/icons-material/Bolt';
+import { capitalizePhrase } from '../utils/bubble';
 
-const SpeechBubbleCard = ({ bubble }) => {
-    const capitalizePhrase = (str) => {
-        // use a regular expression to split the string by sentences that end with a period, question mark, or exclamation mark
-        let sentences = str.split(/(?<=[.?!])\s+/);
-        // initialize an empty array to store the transformed sentences
-        let result = [];
-        // loop through the sentences array
-        for (let sentence of sentences) {
-            // capitalize the first word of the sentence and convert the rest to lowercase
-            sentence = sentence[0].toUpperCase() + sentence.slice(1).toLowerCase();
-            // use another regular expression to find and remove any extra spaces before punctuation marks
-            sentence = sentence.replace(/\s+(?=[.,:;?!])/g, "");
-            // use another regular expression to find and capitalize the letter "i" when it is used as a pronoun
-            sentence = sentence.replace(/\bi\b/g, "I");
-            // push the transformed sentence to the result array
-            result.push(sentence);
-        }
-        // join the result array by spaces and return it
-        return result.join(" ");
+const SpeechBubbleCard = ({ bubble, onTextChange, onTypeChange }) => {
+    let { text, words, type } = bubble;
+    const [attackType, isAttackType] = useState(type == true)
+
+    const cleanText = () => {
+        const firstCleanText = capitalizePhrase(words.map((word) => word.text).join(' '));
+        console.log(firstCleanText)
+        return firstCleanText;
     };
-    const getText = () => {
-        return capitalizePhrase(bubble.words.map((word) => word.text).join(' '));
+
+    useEffect(() => {
+        if (!text) {
+            onTextChange(cleanText())
+        }
+        console.log({ text, words, type })
+    }, [])
+
+    useEffect(() =>{
+        onTypeChange(attackType)
+    },[attackType])
+
+
+    const handleRestore = () => {
+        const newText = cleanText();
+        onTextChange(newText);
+    };
+
+    const handleAttackType = () => {
+
+        // Toggle the special type or perform any other action
+        isAttackType(!attackType)
+    };
+
+    const handleChange = (e) => {
+        const newText = e.target.value;
+        onTextChange(newText);
     };
 
     return (
-        <Card sx={{ width: '75%' }}>
+        <Card sx={{ width: '450px' }}>
             <CardContent>
                 <ListItemText
                     primary="Luffy"
                     secondary={
-                        <React.Fragment>
-                            {getText()}
-                        </React.Fragment>
+                        <InputBase
+                            component="span"
+                            maxRows={10}
+                            multiline
+                            value={text}
+                            onChange={handleChange}
+                            sx={{
+                                width: '100%',
+                                color: 'rgba(0, 0, 0, 0.6)',
+                                fontSize: '0.875rem',
+                                outline: '0 solid transparent'
+                            }}
+                        />
                     }
-                />            </CardContent>
+                />
+                <Paper sx={{ bgcolor: '#dc2f2f', width: '25%' }}>
+                    <Stack direction={`row`} justifyContent={`center`} spacing={1}>
+                        <RestoreIcon
+                            sx={{
+                                color: 'white',
+                                cursor: 'pointer',
+                                '&:hover': { color: 'gray' }
+                            }}
+                            onClick={handleRestore}
+                        />
+                        <BoltIcon
+                            sx={{
+                                color: attackType ? `yellow` : `white`,
+                                cursor: 'pointer',
+                                '&:hover': { color: 'gray' }
+                            }}
+                            onClick={handleAttackType}
+                        />
+                    </Stack>
+                </Paper>
+            </CardContent>
         </Card>
     );
 };

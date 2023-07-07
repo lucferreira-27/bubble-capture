@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Stage, Layer, Image, Rect } from 'react-konva';
-import { Container } from '@mui/material';
+import { Container, Button, Box } from '@mui/material';
 
 import useImage from 'use-image';
 
-const Canvas = ({ page, onSelect }) => {
+const Canvas = ({ page, onSelect, onPageChange }) => {
     // A state to store the selected speech bubble index
-    const [zoomOut, setZoomOut] = useState(0.30);
+    const [zoomOut, setZoomOut] = useState(0.28);
     const [selectedBubble, setSelectedBubble] = useState(null);
 
     // A custom hook to load the image from the page url
@@ -19,9 +19,9 @@ const Canvas = ({ page, onSelect }) => {
         onSelect(block);
     };
 
-    return (
-        <Container sx={{ overflow: 'auto', width: `500px` }}>
-            <Stage width={image ? (image.width * 0.30) : 450} height={670}>
+    return (<Container>
+        <Container sx={{ overflow: 'scroll', width: `500px`, height: `660px` }}>
+            <Stage width={image ? (image.width * zoomOut) : 450} height={680}>
                 {image && <Layer>
                     {/* Render an Image component with the loaded image and scale it to 25% */}
                     <Image image={image} scale={{ x: zoomOut, y: zoomOut }} />
@@ -69,8 +69,8 @@ const Canvas = ({ page, onSelect }) => {
                 </Layer>}
 
             </Stage>
-
         </Container>
+    </Container>
 
     );
 };

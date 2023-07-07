@@ -8,7 +8,6 @@ const MangaViewer = ({ directory, series, chapter }) => {
     const [pages, setPages] = useState([]);
 
     // A state to store the current page index
-    const [pageIndex, setPageIndex] = useState(0);
 
     // A function to fetch the json content of the pages from the api
     const fetchPages = async () => {
@@ -39,28 +38,15 @@ const MangaViewer = ({ directory, series, chapter }) => {
 
     // Use an effect hook to fetch the pages when the component mounts or updates
     useEffect(() => {
-        console.log(`hi`)
         fetchPages();
     }, [directory, series, chapter]);
 
-    // A function to handle the change of the page index
-    const handleChangePage = (delta) => {
-        // Calculate the new page index by adding the delta value
-        console.log(pageIndex,delta)
-        let newIndex = pageIndex + delta;
 
-        // Check if the new index is within the range of the pages array
-        if (newIndex >= 0 && newIndex < pages.length) {
-            // If yes, set the page index state to the new index
-            setPageIndex(newIndex);
-        }
-    };
 
     return (
         <div>
 
-            {/* Render a PageViewer component with the current page as a prop */}
-            <EditPanel handleChangePage={handleChangePage} page={pages[pageIndex]} />
+            <EditPanel pages={pages} />
 
         </div>
     );
