@@ -1,7 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Grid, Box, Container, Stack, Button, Paper } from '@mui/material';
+import { Grid, Box, Container, Stack, Button, Paper, IconButton, Typography } from '@mui/material';
 import Canvas from './Canvas';
 import SpeechBubbleList from './SpeechBubbleList';
+import RestoreIcon from '@mui/icons-material/Restore';
+import GroupAddIcon from '@mui/icons-material/GroupAdd';
+import GroupRemoveIcon from '@mui/icons-material/GroupRemove';
+import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 
 const EditPanel = ({ pages }) => {
     // A state to store the selected speech bubbles
@@ -80,12 +85,71 @@ const EditPanel = ({ pages }) => {
     }, [page]);
 
     return (
-        <Grid container spacing={0.5}>
+        <Grid container spacing={1.5}>
             <Grid item xs={6} md={6}>
                 <Paper elevation={3} sx={{ background: `#222831` }}>
-                    <Box height="calc(100vh - 82px)" display="flex" flexDirection="column">
+                    <Box height="calc(100vh - 172px)" display="flex" flexDirection="column">
                         {selectedBubbles && <SpeechBubbleList bubbles={selectedBubbles} setBubbles={setSelectedBubbles} />}
                     </Box>
+                    <Paper elevation={3} sx={{ margin: `5px`, background: `#f2f2f2` }}>
+                        <Box height="80px" display="flex" justifyContent="center" alignItems="center" gap={2}>
+                            <Paper elevation={3} sx={{ background: `#f96d00`, padding: '0px 5px 5px 05px', textAlign: 'center' }}>
+                                <Box>
+                                    <Typography variant="caption" sx={{ color: 'white', fontSize: '10px' }}>
+                                        {`BUBBLES PICK: `}
+                                    </Typography>
+                                    <Typography variant="caption" sx={{ color: 'white', fontSize: '10px' }}>
+                                        {`${0} `}
+                                    </Typography>
+
+                                </Box>
+
+                            </Paper>
+                            <IconButton
+                                sx={{
+                                    bgcolor: '#f96d00',
+                                    '&:hover': {
+                                        bgcolor: '#222831',
+                                    },
+                                }}
+                            >
+                                <AutoAwesomeIcon sx={{ color: 'white' }} />
+                            </IconButton>
+
+                            <IconButton
+                                sx={{
+                                    bgcolor: '#f96d00',
+                                    '&:hover': {
+                                        bgcolor: '#222831',
+                                    },
+                                }}
+                            >
+                                <GroupAddIcon sx={{ color: 'white' }} />
+                            </IconButton>
+                            <IconButton
+                                sx={{
+                                    bgcolor: '#f96d00',
+                                    '&:hover': {
+                                        bgcolor: '#222831',
+                                    },
+                                }}
+                            >
+                                <GroupRemoveIcon sx={{ color: 'white' }} />
+                            </IconButton>
+                            <IconButton
+                                sx={{
+                                    bgcolor: '#f96d00',
+                                    '&:hover': {
+                                        bgcolor: '#222831',
+                                    },
+                                }}
+                            >
+                                <DeleteSweepIcon sx={{ color: 'white' }} />
+                            </IconButton>
+                        </Box>
+
+
+                    </Paper>
                 </Paper>
             </Grid>
             <Grid item xs={6} md={6}>
@@ -93,7 +157,6 @@ const EditPanel = ({ pages }) => {
                     <Box height="calc(100vh - 82px)" display="flex" flexDirection="column">
                         {page && <Canvas page={page} onSelect={handleSelect} onPageChange={onPageChange} />}
                     </Box>
-                    
                 </Paper>
             </Grid>
         </Grid>
