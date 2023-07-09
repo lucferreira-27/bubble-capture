@@ -21,7 +21,6 @@ const SpeechBubbleCard = ({ bubble, onTextChange, onTypeChange }) => {
 
     const cleanText = () => {
         const firstCleanText = capitalizePhrase(words.map((word) => word.text).join(' '));
-        console.log(firstCleanText)
         return firstCleanText;
     };
 
@@ -29,7 +28,6 @@ const SpeechBubbleCard = ({ bubble, onTextChange, onTypeChange }) => {
         if (!text) {
             onTextChange(cleanText())
         }
-        console.log({ text, words, type })
     }, [])
 
     useEffect(() =>{

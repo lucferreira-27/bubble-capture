@@ -1,163 +1,104 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Grid, Box, Container, Stack, Button, Paper, IconButton, Typography } from '@mui/material';
-import Canvas from './Canvas';
-import SpeechBubbleList from './SpeechBubbleList';
-import RestoreIcon from '@mui/icons-material/Restore';
-import GroupAddIcon from '@mui/icons-material/GroupAdd';
-import GroupRemoveIcon from '@mui/icons-material/GroupRemove';
-import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
-import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import React, { useState, useEffect } from 'react';
+import { Grid, Paper } from '@mui/material';
+import SpeechBubbleListContainer from './SpeechBubbleListContainer';
+import TranscriptBubblesMenu from './TranscriptBubblesMenu';
+import CanvasContainer from './CanvasContainer';
+import useSelectedBubbles from './hooks/useSelectedBubbles'
+
 
 const EditPanel = ({ pages }) => {
-    // A state to store the selected speech bubbles
-    const [page, setPage] = useState(null);
-    const [pageIndex, setPageIndex] = useState(0);
-    const [selectedBubbles, setSelectedBubbles] = useState([]);
-    const [allSelectedBubbles, setAllSelectedBubbles] = useState({});
 
-    // When the page changes, update the state with the current page and selected bubbles
+    const UPDATE_BUBBLES = 'UPDATE_BUBBLES';
+
+
+    const [currentPage, setCurrentPage] = useState(null);
+    const [selectedBubbles, dispatch] = useSelectedBubbles({});
+
     useEffect(() => {
-        if (pages) {
-            setPage(pages[0]);
+        if (pages && !currentPage) {
+            setCurrentPage(pages[0]);
         }
-    }, [pages]);
+    }, [pages, currentPage]);
 
     useEffect(() => {
-        if (!page) {
+        if (!currentPage) {
             return;
         }
-        setSelectedBubbles(allSelectedBubbles[page.pageNumber] || []);
-    }, [page]);
 
-    const handleChangePage = (delta) => {
-        // Calculate the new page index by adding the delta value
-        let newIndex = pages.indexOf(page) + delta;
+        const pageNumber = currentPage.pageNumber;
+        const bubbles = selectedBubbles[pageNumber] || [];
 
-        // Check if the new index is within the range of the pages array
-        if (newIndex >= 0 && newIndex < pages.length) {
-            // If yes, set the page index state to the new index
-            setSelectedBubbles([]);
-            setPage(pages[newIndex]);
-        }
-    };
+        dispatch({
+            type: UPDATE_BUBBLES,
+            payload: { pageNumber, bubbles },
+        });
+    }, [currentPage]);
 
-    const onPageChange = (action) => {
-        setAllSelectedBubbles((prev) => ({
-            ...prev,
-            [page.pageNumber]: selectedBubbles,
-        }));
-        handleChangePage(action);
-    };
-
-    // When you want to retrieve the selected bubbles for a specific page, you can use the object property access
-
-    // A function to handle the selection of a speech bubble
-    const handleSelect = (bubble) => {
-        // Check if the bubble is already selected
-        let isSelected = selectedBubbles.includes(bubble);
-
-        // If yes, remove it from the state array
-        if (isSelected) {
-            setSelectedBubbles((prev) => prev.filter((b) => b !== bubble));
-        } else {
-            // If no, add it to the state array
-            setSelectedBubbles((prev) => [...prev, bubble]);
-        }
-    };
-
-    // A function to handle the keydown event
-    const handleKeyDown = (event) => {
-        // Check the keyCode of the event object
-        if (event.keyCode === 37) {
-            onPageChange(-1);
-        } else if (event.keyCode === 39) {
-            onPageChange(1);
-        }
-    };
-
-    // A useEffect hook to add and remove the event listener
     useEffect(() => {
-        window.addEventListener('keydown', handleKeyDown);
+
+        const eventKeyDown = 'keydown'
+
+        const handleKeyDown = event => {
+            const leftArrowCode = 37
+            const rightArrowCode = 39
+
+            if (event.keyCode === leftArrowCode) {
+                handlePageChange(-1);
+            } else if (event.keyCode === rightArrowCode) {
+                handlePageChange(1);
+            }
+        };
+
+        window.addEventListener(eventKeyDown, handleKeyDown);
 
         return () => {
-            window.removeEventListener('keydown', handleKeyDown);
+            window.removeEventListener(eventKeyDown, handleKeyDown);
         };
-    }, [page]);
+    }, [currentPage]);
+
+    const handlePageChange = delta => {
+        const currentIndex = pages.indexOf(currentPage);
+        const newIndex = currentIndex + delta;
+
+        if (newIndex >= 0 && newIndex < pages.length) {
+            setCurrentPage(pages[newIndex]);
+        }
+    };
+
+    const handleSelect = bubble => {
+        const pageNumber = currentPage.pageNumber;
+        const bubbles = selectedBubbles[pageNumber] || [];
+        const isSelected = bubbles.includes(bubble);
+        let updatedBubbles;
+
+        if (isSelected) {
+            updatedBubbles = bubbles.filter(b => b !== bubble);
+        } else {
+            updatedBubbles = [...bubbles, bubble];
+        }
+
+        dispatch({
+            type: UPDATE_BUBBLES,
+            payload: { pageNumber, bubbles: updatedBubbles },
+        });
+    };
+
+    const pageNumber = currentPage ? currentPage.pageNumber : null;
+    const currentBubbles = selectedBubbles[pageNumber] || [];
 
     return (
         <Grid container spacing={1.5}>
             <Grid item xs={6} md={6}>
-                <Paper elevation={3} sx={{ background: `#222831` }}>
-                    <Box height="calc(100vh - 172px)" display="flex" flexDirection="column">
-                        {selectedBubbles && <SpeechBubbleList bubbles={selectedBubbles} setBubbles={setSelectedBubbles} />}
-                    </Box>
-                    <Paper elevation={3} sx={{ margin: `5px`, background: `#f2f2f2` }}>
-                        <Box height="80px" display="flex" justifyContent="center" alignItems="center" gap={2}>
-                            <Paper elevation={3} sx={{ background: `#f96d00`, padding: '0px 5px 5px 05px', textAlign: 'center' }}>
-                                <Box>
-                                    <Typography variant="caption" sx={{ color: 'white', fontSize: '10px' }}>
-                                        {`BUBBLES PICK: `}
-                                    </Typography>
-                                    <Typography variant="caption" sx={{ color: 'white', fontSize: '10px' }}>
-                                        {`${0} `}
-                                    </Typography>
-
-                                </Box>
-
-                            </Paper>
-                            <IconButton
-                                sx={{
-                                    bgcolor: '#f96d00',
-                                    '&:hover': {
-                                        bgcolor: '#222831',
-                                    },
-                                }}
-                            >
-                                <AutoAwesomeIcon sx={{ color: 'white' }} />
-                            </IconButton>
-
-                            <IconButton
-                                sx={{
-                                    bgcolor: '#f96d00',
-                                    '&:hover': {
-                                        bgcolor: '#222831',
-                                    },
-                                }}
-                            >
-                                <GroupAddIcon sx={{ color: 'white' }} />
-                            </IconButton>
-                            <IconButton
-                                sx={{
-                                    bgcolor: '#f96d00',
-                                    '&:hover': {
-                                        bgcolor: '#222831',
-                                    },
-                                }}
-                            >
-                                <GroupRemoveIcon sx={{ color: 'white' }} />
-                            </IconButton>
-                            <IconButton
-                                sx={{
-                                    bgcolor: '#f96d00',
-                                    '&:hover': {
-                                        bgcolor: '#222831',
-                                    },
-                                }}
-                            >
-                                <DeleteSweepIcon sx={{ color: 'white' }} />
-                            </IconButton>
-                        </Box>
-
-
-                    </Paper>
-                </Paper>
+                <SpeechBubbleListContainer
+                    currentPage={currentPage}
+                    currentBubbles={currentBubbles}
+                    dispatch={dispatch}
+                    UPDATE_BUBBLES={UPDATE_BUBBLES}
+                />
+                <TranscriptBubblesMenu currentBubbles={currentBubbles} />
             </Grid>
             <Grid item xs={6} md={6}>
-                <Paper elevation={3} sx={{ background: `#e3e3e3` }}>
-                    <Box height="calc(100vh - 82px)" display="flex" flexDirection="column">
-                        {page && <Canvas page={page} onSelect={handleSelect} onPageChange={onPageChange} />}
-                    </Box>
-                </Paper>
+                <CanvasContainer currentPage={currentPage} handleSelect={handleSelect} handlePageChange={handlePageChange} />
             </Grid>
         </Grid>
     );
