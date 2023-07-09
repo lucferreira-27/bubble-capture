@@ -68,11 +68,11 @@ const EditPanel = ({ pages }) => {
     const handleSelect = bubble => {
         const pageNumber = currentPage.pageNumber;
         const bubbles = selectedBubbles[pageNumber] || [];
-        const isSelected = bubbles.includes(bubble);
+        const isSelected = bubbles.find(b => bubble.id == b.id);
         let updatedBubbles;
 
         if (isSelected) {
-            updatedBubbles = bubbles.filter(b => b !== bubble);
+            updatedBubbles = bubbles.filter(b => b.id !== bubble.id);
         } else {
             updatedBubbles = [...bubbles, bubble];
         }
@@ -98,7 +98,12 @@ const EditPanel = ({ pages }) => {
                 <TranscriptBubblesMenu currentBubbles={currentBubbles} />
             </Grid>
             <Grid item xs={6} md={6}>
-                <CanvasContainer currentPage={currentPage} handleSelect={handleSelect} handlePageChange={handlePageChange} />
+                <CanvasContainer
+                    currentPage={currentPage}
+                    handleSelect={handleSelect}
+                    currentBubbles={currentBubbles}
+                    handlePageChange={handlePageChange}
+                />
             </Grid>
         </Grid>
     );
