@@ -15,6 +15,13 @@ const SpeechBubbleList = ({ bubbles, setBubbles }) => {
     setBubbles(items);
   };
 
+  const onHover = (bubble,isHover) =>{
+    if(isHover){
+      console.log(bubble)
+      return
+    }
+  }
+
 
   return (
     <List sx={{ overflowY: 'auto', overflowX: 'hidden', marginRight: `20px`, maxHeight: 650, maxWidth: 550, width: 550, height: 650 }}>
@@ -22,12 +29,14 @@ const SpeechBubbleList = ({ bubbles, setBubbles }) => {
         <Droppable droppableId="bubbles">
           {(provided) => (
             <div {...provided.droppableProps} ref={provided.innerRef}>
-              {bubbles.map((bubble, index) => (
+              {bubbles.sort((a,b) => a.index - b.index).map((bubble,index) => (
                 <DraggableSpeechBubble
+                  onHover={onHover}
                   key={bubble.id}
                   bubbles={bubbles}
                   targetBubble={bubble}
                   index={index}
+                  position={bubble.index}
                   setBubbles={setBubbles}
                 />
               ))}

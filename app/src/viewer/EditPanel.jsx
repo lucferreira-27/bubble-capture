@@ -83,6 +83,7 @@ const EditPanel = ({ pages }) => {
         });
     };
 
+
     const pageNumber = currentPage ? currentPage.pageNumber : null;
     const currentBubbles = selectedBubbles[pageNumber] || [];
 
@@ -101,6 +102,12 @@ const EditPanel = ({ pages }) => {
                 <CanvasContainer
                     currentPage={currentPage}
                     handleSelect={handleSelect}
+                    setBubbles={(bubbles) =>{
+                        dispatch({
+                            type: UPDATE_BUBBLES,
+                            payload: { pageNumber, bubbles: bubbles },
+                        });
+                    }}
                     currentBubbles={currentBubbles}
                     handlePageChange={handlePageChange}
                 />

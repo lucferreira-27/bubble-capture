@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Draggable } from 'react-beautiful-dnd';
 import SpeechBubble from './SpeechBubble';
 
-const DraggableSpeechBubble = ({ targetBubble, bubbles, index, setBubbles }) => {
+const DraggableSpeechBubble = ({ targetBubble,onHover ,bubbles, index, position, setBubbles }) => {
     const [isDragEnabled, setIsDragEnabled] = useState(false);
     const handleOnRemove = () => {
         const newBubbles = bubbles.filter((b) => b !== targetBubble);
@@ -16,12 +16,13 @@ const DraggableSpeechBubble = ({ targetBubble, bubbles, index, setBubbles }) => 
         setIsDragEnabled(false);
     };
     return (
-        <Draggable key={targetBubble.id} draggableId={`${targetBubble.id}`} index={index} isDragDisabled={!isDragEnabled}>
+        <Draggable key={targetBubble.id} draggableId={`${targetBubble.id}`} index={position} isDragDisabled={!isDragEnabled}>
             {(provided) => (
                 <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
                     <SpeechBubble
                         bubble={targetBubble}
-                        index={index}
+                        index={position}
+                        onHover={onHover}
                         onTextChange={(newText) => {
                             const updatedBubbles = [...bubbles];
                             updatedBubbles[index].text = newText;

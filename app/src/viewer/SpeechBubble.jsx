@@ -14,7 +14,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import SpeechBubbleCard from './SpeechBubbleCard';
 
-const SpeechBubble = ({ bubble, index, onTextChange, onTypeChange, onRemove,onDragStart,onDragEnd }) => {
+const SpeechBubble = ({ bubble,onHover,index, onTextChange, onTypeChange, onRemove,onDragStart,onDragStop }) => {
 
 
   return (
@@ -40,12 +40,12 @@ const SpeechBubble = ({ bubble, index, onTextChange, onTypeChange, onRemove,onDr
             </Grid>
           </Paper>
         </ListItemAvatar>
-        <SpeechBubbleCard bubble={bubble} onTextChange={onTextChange} onTypeChange={onTypeChange} />
+        <SpeechBubbleCard bubble={bubble} onHover={onHover} onTextChange={onTextChange} onTypeChange={onTypeChange} />
         <Stack direction={`column`} spacing={2} sx={{ margin: `5px` }}>
           <DragIndicatorIcon
             sx={{ color: `white` }}
             onMouseEnter={onDragStart}
-            onMouseLeave={onDragEnd}
+            onMouseLeave={onDragStop}
           />
           <DeleteIcon
             sx={{

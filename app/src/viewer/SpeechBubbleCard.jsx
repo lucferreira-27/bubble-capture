@@ -15,7 +15,7 @@ import RestoreIcon from '@mui/icons-material/Restore';
 import BoltIcon from '@mui/icons-material/Bolt';
 import { capitalizePhrase } from '../utils/bubble';
 
-const SpeechBubbleCard = ({ bubble, onTextChange, onTypeChange }) => {
+const SpeechBubbleCard = ({ bubble, onTextChange, onTypeChange,onHover }) => {
     let { text, words, type } = bubble;
     const [attackType, isAttackType] = useState(type == true)
 
@@ -52,7 +52,7 @@ const SpeechBubbleCard = ({ bubble, onTextChange, onTypeChange }) => {
     };
 
     return (
-        <Card sx={{ width: '450px' }}>
+        <Card sx={{ width: '450px'}} onMouseEnter={() => onHover(bubble,true)} onMouseLeave={() => onHover(bubble,false)}>
             <CardContent>
                 <ListItemText
                     primary="Luffy"
