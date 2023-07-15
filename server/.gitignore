@@ -3,6 +3,9 @@
 #IDE
 .vscode
 
+#database
+*.sqlite
+
 # dependencies
 /node_modules
 /.pnp

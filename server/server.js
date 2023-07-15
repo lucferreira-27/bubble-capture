@@ -12,7 +12,7 @@ function parseString(str) {
   const obj = {};
   const chapterMatch = str.match(/c(\d+)/);
   const volumeMatch = str.match(/v(\d+)/);
-  const pageMatch = str.match(/p(\d+)/);
+  const pageMatch = str.match(/p(\d+)/);  
   const fileTypeMatch = str.match(/\.(\w+)/);
 
   if (chapterMatch) obj.chapter = chapterMatch[1];
@@ -88,6 +88,7 @@ app.get('/api/data/:series/:chapterNumber', (req, res) => {
   const { series, chapterNumber } = req.params;
   const directory = path.join(ROOT_DIRECTORY, 'data');
   const rawData = fs.readFileSync(path.join(directory, 'chapters.json'), 'utf8');
+  console.log(path.join(directory, 'chapters.json'))
 
   try {
     const jsonData = JSON.parse(rawData);
