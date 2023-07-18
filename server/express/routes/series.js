@@ -1,51 +1,69 @@
-const { models } = require('../../sequelize');
+const { Series } = require('../../scheme');
 const { getIdParam } = require('../helpers');
 
-const Series = models.series;
 
 const sendResponse = (res, status, message) => res.status(status).json(message);
 
 async function getAllModels(req, res) {
-	const Seriess = await Series.findAll();
-	sendResponse(res, 200, Seriess);
+    try {
+        const seriesList = await Series.find();
+        sendResponse(res, 200, seriesList);
+    } catch (error) {
+        sendResponse(res, 404, '404 - Not found')
+    }
 };
 
 async function getModelById(req, res) {
-	const id = getIdParam(req);
-	const Series = await Series.findByPk(id);
-	Series ? sendResponse(res, 200, Series) : sendResponse(res, 404, '404 - Not found');
+    try {
+        const id = getIdParam(req);
+        const series = await Series.findById(id);
+        sendResponse(res, 200, series)
+    } catch (error) {
+        sendResponse(res, 404, '404 - Not found')
+    }
 };
 
 async function createModel(req, res) {
-	if (req.body.id) {
-		sendResponse(res, 400, `Bad request: ID should not be provided, since it is determined automatically by the database.`);
-	} else {
-		await Series.create(req.body);
-		res.status(201).end();
-	}
+    if (req.body.id) {
+        sendResponse(res, 400, `Bad request: ID should not be provided, since it is determined automatically by the database.`);
+    } else {
+        try {
+            await Series.create(req.body);
+            res.status(201).end();
+        } catch (error) {
+            sendResponse(res, 500, 'Internal Server Error');
+        }
+    }
 };
 
 async function updateModel(req, res) {
-	const id = getIdParam(req);
-
-	if (req.body.id === id) {
-		await Series.update(req.body, { where: { id: id } });
-		res.status(200).end();
-	} else {
-		sendResponse(res, 400, `Bad request: param ID (${id}) does not match body ID (${req.body.id}).`);
-	}
+    try {
+        const id = getIdParam(req);
+        if (req.body.id !== undefined && req.body.id !== id) {
+            sendResponse(res, 400, `Bad request: param ID (${id}) does not match body ID (${req.body.id}).`);
+        } else {
+            await Series.findByIdAndUpdate(id, req.body);
+            res.status(200).end();
+        }
+    } catch (error) {
+        sendResponse(res, 500, 'Internal Server Error');
+    }
 };
 
 async function removeModel(req, res) {
-	const id = getIdParam(req);
-	await Series.destroy({ where: { id: id } });
-	res.status(200).end();
+    try {
+        const id = getIdParam(req);
+        await Series.findByIdAndRemove(id);
+        res.status(200).end();
+    } catch (error) {
+        sendResponse(res, 500, 'Internal Server Error');
+    }
 };
 
 module.exports = {
-	getAllModels,
-	getModelById,
-	createModel,
-	updateModel,
-	removeModel,
+    getAllModels,
+    getModelById,
+    createModel,
+    updateModel,
+    removeModel,
 };
