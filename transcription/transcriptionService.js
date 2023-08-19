@@ -21,10 +21,7 @@ const getWikipediaContent = () => {
 const createViewImage = async (chapters) => {
 
     for (const page of chapters[0].pages) {
-        if (page.pageNumber != `013`) {
-            continue
-        }
-        output = `./image-${page.pageNumber}.png`
+        output = `./images/image-${page.pageNumber}.png`
         const { panels, textBlocks, speechBubbles, segments } = page
         const stage = new konva.Stage({
             width: page.image.width,
@@ -38,7 +35,7 @@ const createViewImage = async (chapters) => {
 
         // Load the image from the file specified in `inputFile`
 
-        const image = await loadImage(`E:/One Piece - Manga v1 - v102/One Piece v001 (2003) (Digital) (1r0n) (f)/${page.image.file}`);
+        const image = await loadImage(`H:/One Piece (Digital) (1r0n)/One Piece v001 (2003) (Digital) (1r0n) (f)/${page.image.file}`);
 
         // Create a Konva image from the loaded image
         const konvaImage = new konva.Image({
@@ -98,7 +95,7 @@ const createViewImage = async (chapters) => {
                 x: textX,
                 y: textY,
                 text: panel.readOrder + 1,
-                fontSize: 48,
+                fontSize: 64,
                 fontFamily: 'Arial',
                 fill: 'white'
             });
@@ -108,7 +105,7 @@ const createViewImage = async (chapters) => {
 
         // Draw text blocks
         const segmentLayer = new konva.Layer();
-
+        /*
         segments.forEach(segment => {
             const rect = new konva.Rect({
                 x: segment.x1,
@@ -121,18 +118,18 @@ const createViewImage = async (chapters) => {
             });
             segmentLayer.add(rect);
         });
-
+        */
         // Draw speech bubbles
         const bubbleLayer = new konva.Layer();
-        speechBubbles.forEach(({ textBlock, found }) => {
-            const { x1, x2, y1, y2 } = textBlock
+        speechBubbles.forEach(({ coordinates, found }) => {
+            const { x1, x2, y1, y2 } = coordinates
             const rect = new konva.Rect({
                 x: x1,
                 y: y1,
                 width: x2 - x1,
                 height: y2 - y1,
-                opacity: 0.50,
-                fill: found ? `green` : `red`,
+                opacity: 1,
+                stroke: `white`,// add this line
                 strokeWidth: 5 // add this line
             });
             bubbleLayer.add(rect);
@@ -323,7 +320,7 @@ let chapters = createBlockArea(chaptersData, blockAreaConfig)
 chapters = createSpeechBubbles(chapters)
 chapters = createTranscriptions(chapters)
 // saveTranscriptionsToFile(chapters, './transcriptions.txt')
-// createViewImage(chapters, './image.png')
+createViewImage(chapters, './image.png')
 // showTranscriptionsOnConsole(transcriptions)
 saveChaptersJson(chapters)
 

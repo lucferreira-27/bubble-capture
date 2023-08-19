@@ -172,7 +172,8 @@ const createSpeechBubbles = (chapters) => {
                 panel: block[0].panel,
                 speechContent: joinTextBlock(block), // Extracted and formatted text
                 position: index,
-                found: segments
+                found: segments,
+                coordinates
             }));
             page.speechBubbles = speechBubbles
         }

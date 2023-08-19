@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "canvas": "^2.11.2",
+    "konva": "^9.2.0"
+  }
+}
